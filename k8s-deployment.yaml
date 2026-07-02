@@ -1,0 +1,50 @@
+# ============================================
+# Kubernetes Deployment + Service
+# File: k8s-deployment.yaml
+# ============================================
+
+# ---------- DEPLOYMENT ----------
+# Tells Kubernetes: run my Docker image, keep 1 copy (replica) alive
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: retail-analytics-deployment
+  labels:
+    app: retail-analytics
+spec:
+  replicas: 1                      # number of pods (copies) to run
+  selector:
+    matchLabels:
+      app: retail-analytics
+  template:
+    metadata:
+      labels:
+        app: retail-analytics
+    spec:
+      containers:
+        - name: retail-analytics
+          image: <your-dockerhub-username>/retail-analytics:latest   # your image
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1"
+
+---
+# ---------- SERVICE ----------
+# Exposes the app inside/outside the cluster
+apiVersion: v1
+kind: Service
+metadata:
+  name: retail-analytics-service
+spec:
+  type: NodePort                   # accessible via <NodeIP>:<NodePort>
+  selector:
+    app: retail-analytics
+  ports:
+    - port: 80                     # service port
+      targetPort: 4040             # Spark UI port inside container
+      nodePort: 30080              # external port (30000-32767)
