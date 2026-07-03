@@ -1,22 +1,32 @@
-# ============================================
-# Dockerfile for PySpark Retail Analytics App
-# ============================================
+# ==========================================
+# Dockerfile - PySpark Retail Analytics
+# ==========================================
 
-# 1. Base image: official Python image
+# Base Image
 FROM python:3.10-slim
 
-# 2. Install Java (Spark needs Java to run)
-RUN apt-get update && apt-get install -y default-jre && rm -rf /var/lib/apt/lists/*
+# Install Java (Required for Spark)
+RUN apt-get update && \
+    apt-get install -y default-jre && \
+    apt-get clean
 
-# 3. Install PySpark
-RUN pip install --no-cache-dir pyspark==3.5.0
+# Set JAVA_HOME
+ENV JAVA_HOME=/usr/lib/jvm/default-java
+ENV PATH=$PATH:$JAVA_HOME/bin
 
-# 4. Set working directory inside the container
+# Set Working Directory
 WORKDIR /app
 
-# 5. Copy project files into the container
-COPY app.py .
-COPY synthetic_transactions.csv .
+# Copy project files
+COPY . .
 
-# 6. Command that runs when container starts
+# Install Python dependencies
+RUN pip install --no-cache-dir \
+    pyspark==3.5.0 \
+    pandas \
+    numpy \
+    matplotlib \
+    scikit-learn
+
+# Run application
 CMD ["python", "app.py"]
