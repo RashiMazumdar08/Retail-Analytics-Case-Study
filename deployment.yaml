@@ -1,9 +1,3 @@
-# ============================================
-# Kubernetes Deployment + Service
-# File: k8s-deployment.yaml
-# ============================================
-
-# ---------- DEPLOYMENT ----------
 apiVersion: apps/v1
 kind: Deployment
 
@@ -28,6 +22,9 @@ spec:
           image: retail-analytics:v1
           imagePullPolicy: Never
 
+          ports:
+            - containerPort: 4040
+
           resources:
             requests:
               memory: "1Gi"
@@ -36,26 +33,3 @@ spec:
             limits:
               memory: "2Gi"
               cpu: "1"
-
-          ports:
-            - containerPort: 4040
-
----
-# ---------- SERVICE ----------
-apiVersion: v1
-kind: Service
-
-metadata:
-  name: retail-analytics-service
-
-spec:
-  selector:
-    app: retail-analytics
-
-  type: NodePort
-
-  ports:
-    - protocol: TCP
-      port: 4040
-      targetPort: 4040
-      nodePort: 30080
