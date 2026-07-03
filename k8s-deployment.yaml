@@ -1,63 +1,34 @@
-# ============================================
-# Kubernetes Deployment + Service
-# File: k8s-deployment.yaml
-# ============================================
-
-# ---------- DEPLOYMENT ----------
-# Tells Kubernetes: run my Docker image, keep 1 copy (replica) alive
 apiVersion: apps/v1
 kind: Deployment
-
 metadata:
   name: retail-analytics
-
 spec:
   replicas: 1
-
   selector:
     matchLabels:
       app: retail-analytics
-
   template:
     metadata:
       labels:
         app: retail-analytics
-
     spec:
       containers:
       - name: retail-analytics
-
         image: retail-analytics:v1
-
         imagePullPolicy: Never
-
-        resources:
-          requests:
-            memory: "1Gi"
-            cpu: "500m"
-
-          limits:
-            memory: "2Gi"
-            cpu: "1"
-
         ports:
         - containerPort: 4040
-# ---------- SERVICE ----------
-# Exposes the app inside/outside the cluster
+
+---
 apiVersion: v1
 kind: Service
-
 metadata:
   name: retail-analytics-service
-
 spec:
   selector:
     app: retail-analytics
-
   type: NodePort
-
   ports:
-  - protocol: TCP
-    port: 4040
+  - port: 4040
     targetPort: 4040
     nodePort: 30080
