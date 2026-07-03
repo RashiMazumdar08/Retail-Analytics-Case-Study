@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: retail-analytics-service
+
+spec:
+  selector:
+    app: retail-analytics
+
+  type: NodePort
+
+  ports:
+    - protocol: TCP
+      port: 4040
+      targetPort: 4040
+      nodePort: 30080
